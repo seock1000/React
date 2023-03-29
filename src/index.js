@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+// element id가 root인 DOM 랜더링 -> index.html 내부에 <div id="root"></div> => 여기 안에다가 랜더링
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
