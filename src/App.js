@@ -1,5 +1,6 @@
 import React from 'react';
 import Hello from './Hello';
+import Wrapper from './Wrapper';
 import './App.css'; // css class는 import
 
 // 컴포넌트 재사용
@@ -18,11 +19,14 @@ function App() {
     <>
       {/* JSX 내부 주석 */}
       {/* 중괄호로 감싸야 노출 x */}
-      <Hello 
-       // 열리는 태그 내부에선 이와 같이 주석 사용 가능
-      />
-      <Hello />
-      <Hello />
+      {/* Wrapper 태그 안의 요소는 Wrapper 컴포넌트에서 랜더링 해줘야 화면에 출력 */}
+      <Wrapper>
+        <Hello 
+        // 컴포넌트에 변수 전달하려면
+        name='react' color='red'/>
+        <Hello color='pink'/>
+        <Hello />
+      </Wrapper>
       <div style={style}>{name}</div>
       <div className='gray-box'></div>
     </>
