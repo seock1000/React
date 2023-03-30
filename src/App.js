@@ -72,17 +72,20 @@ const [users, setUsers] = useState([
   {
       id: 1,
       username: 'seockcheon',
-      email: 'test1@gmail.com'
+      email: 'test1@gmail.com',
+      active: true
   },
   {
       id: 2,
       username: 'seockcheon1',
-      email: 'test2@gmail.com'
+      email: 'test2@gmail.com',
+      active: false
   },
   {
       id: 3,
       username: 'seockcheon2',
-      email: 'test3@gmail.com'
+      email: 'test3@gmail.com',
+      active: false
   }
 ]);
 
@@ -111,7 +114,15 @@ const onCreate = () => {
 const onRemove = id => {
   // user.id가 일치하지 않는 element만 추출해서 새로운 배열 생성 => 사실 삭제가 아니라 걔 빼고 새로 만드는 너낌..?
   setUsers(users.filter(user => user.id !== id));
-}
+};
+
+const onToggle = id => {
+  setUsers(
+    users.map(user =>
+      user.id === id ? {...user, active: !user.active} : user
+    )
+  );
+};
 
   return(
     <>
@@ -121,7 +132,7 @@ const onRemove = id => {
       onChange={onChange}
       onCreate={onCreate}
       />
-      <UserList users={users} onRemove={onRemove}/>
+      <UserList users={users} onRemove={onRemove} onToggle={onToggle}/>
     </>
   )
 }
