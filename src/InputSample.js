@@ -1,23 +1,39 @@
 import React, {useState} from "react";
 
 function InputSample() {
-    const [text, setText] = useState('');
+    // 여러 input값은 객체로 관리
+    const [inputs, setInputs] = useState({
+        name: '',
+        nickname: ''
+    });
+
+    const { name, nickname } = inputs; // 비구조화 할당을 통한 값 추출
 
     // e : 이벤트 객체, e.target은 이벤트가 발생한 DOM인 input DOM을 가리키게 됨
     const onChange = (e) => {
-        setText(e.target.value);
+        const { value, name } = e.target; // 이벤트 객체에서 name과 value 추출
+        setInputs({
+            ...inputs, // ... : spread 연산자, 기존 객체나 배열을 건드리지 않고 사용, 값 복사에 유용
+            [name]: value // name key를 가진 값을 value로 설정
+        });
     };
 
     const onReset = () => {
-        setText('');
+        setInputs({
+            name: '',
+            nickaname: '',
+        });
     };
 
     return (
         <div>
-            <input onChange={onChange}/>
+            <input name="name" placeholder="Name" onChange={onChange} value={name}/>
+            <input name="nickname" placeholder="Nickname" onChange={onChange} value={nickname}/>
             <button onClick={onReset}>초기화</button>
             <div>
-                <b>값: {text}</b>
+                <b>값: </b>
+                {name}
+                {nickname && '(' + nickname + ')'}
             </div>
         </div>
     );
