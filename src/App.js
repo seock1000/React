@@ -22,8 +22,9 @@ function App() {
       {/* Wrapper 태그 안의 요소는 Wrapper 컴포넌트에서 랜더링 해줘야 화면에 출력 */}
       <Wrapper>
         <Hello 
-        // 컴포넌트에 변수 전달하려면
-        name='react' color='red'/>
+        // isSpecial: true는 자바스크립트 값이므로 중괄호 => isSpecial={true}
+        // 값 설정을 안하면 true로 간주
+        name='react' color='red' isSpecial/>
         <Hello color='pink'/>
         <Hello />
       </Wrapper>
