@@ -1,9 +1,11 @@
-import React from 'react';
+import {React, useRef, useState} from 'react';
 //import Hello from './Hello';
 //import Wrapper from './Wrapper';
 //import Counter from './Counter';
-import InputSample from './InputSample';
+//import InputSample from './InputSample';
 import './App.css'; // css class는 import
+import CreateUser from './CreateUser';
+import UserList from './UserList';
 
 /* // 컴포넌트 재사용
 // <></> => Fragment : 브라우저 상에서 별도의 element로 나타나지 않는 요소, 하나 이상의 태그는 반드시 하나의 태그로 감싸져 있어야 하기 때문에 사용
@@ -42,10 +44,81 @@ function App() {
   );
 } */
 
-function App() {
+/* function App() {
   return (
     <InputSample />
   );
+} */
+
+
+function App() {
+
+  const [inputs, setInputs] = useState( {
+    username: '',
+    email: ''
+  });
+
+  const {username, email} = inputs;
+  const onChange = e => {
+    const { name, value } = e.target;
+    setInputs({
+      ...inputs,
+      [name]: value
+    });
+  };
+
+// App.js에서 users 생성하여 전달
+const [users, setUsers] = useState([
+  {
+      id: 1,
+      username: 'seockcheon',
+      email: 'test1@gmail.com'
+  },
+  {
+      id: 2,
+      username: 'seockcheon1',
+      email: 'test2@gmail.com'
+  },
+  {
+      id: 3,
+      username: 'seockcheon2',
+      email: 'test3@gmail.com'
+  }
+]);
+
+// useRef 사용하여 id 관리
+const nextId = useRef(4);
+// 배열에 항목 추가 로직
+const onCreate = () => {
+  const user = {
+    id: nextId.current,
+    username,
+    email
+  };
+
+  // 배열도 객체와 마찬가지로 리액트에서는 변경 불허용 => 기존 배열을 복사하고 거기에 추가한 걸로 새로 만들어야함
+  // 배열에 새 항목 추가시 두 가지 방법, spread(...) or concat function
+  //setUsers([...users, user]);
+  setUsers(users.concat(user));
+
+  setInputs({
+    username: '',
+    email: ''
+  });
+  nextId.current += 1;
+};
+
+  return(
+    <>
+      <CreateUser 
+      username={username}
+      email={email}
+      onChange={onChange}
+      onCreate={onCreate}
+      />
+      <UserList users={users}/>
+    </>
+  )
 }
 
 export default App;
