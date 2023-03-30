@@ -1,6 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 function User({user, onRemove, onToggle}) {
+    // useEffect는 컴포넌트가 마운트 될 때 호출
+    useEffect(() => {
+        console.log("component is mounted");
+        console.log(user);
+        return () => {
+            console.log("component is unmounted");
+            console.log(user);
+        }
+        // [] : deps, 해당 부분에 특정 값 넣으면 해당 값이 바뀌기 직전에도 호출, [] 자체를 생략하면 컴포넌트가 리랜더링 될 때마다 호출
+        // 리액트는 부모 요소가 리랜더링 되면 자식요소도 리랜더링, 유의할 것
+    //}, [user]);
+    });
+
     return (
         <div>
             <b
