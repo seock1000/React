@@ -7,6 +7,8 @@ function Counter() {
 
     // prevNumber가 함수형 최적화라는데 왜지..?
     // 이 코드가 왜 되는거지..?
+    // 파라미터로 함수가 들어가는 것!, 파라미터로 함수가 들어가면 해당 함수에 인자로 이전 값을 전달
+    // 즉, prevNumber => prevNumber + 1 자체가 함수 파라미터!
     const onIncrease = () => {
         setNumber(prevNumber => prevNumber + 1);
     }
