@@ -108,6 +108,11 @@ const onCreate = () => {
   nextId.current += 1;
 };
 
+const onRemove = id => {
+  // user.id가 일치하지 않는 element만 추출해서 새로운 배열 생성 => 사실 삭제가 아니라 걔 빼고 새로 만드는 너낌..?
+  setUsers(users.filter(user => user.id !== id));
+}
+
   return(
     <>
       <CreateUser 
@@ -116,7 +121,7 @@ const onCreate = () => {
       onChange={onChange}
       onCreate={onCreate}
       />
-      <UserList users={users}/>
+      <UserList users={users} onRemove={onRemove}/>
     </>
   )
 }
