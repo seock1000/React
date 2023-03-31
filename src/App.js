@@ -1,4 +1,4 @@
-import {React, useRef, useState} from 'react';
+import { React, useRef, useState, useMemo } from 'react';
 //import Hello from './Hello';
 //import Wrapper from './Wrapper';
 //import Counter from './Counter';
@@ -50,9 +50,12 @@ function App() {
   );
 } */
 
+function countActiveUsers(users) {
+  console.log('counting active users...');
+  return users.filter(user => user.active).length;
+}
 
 function App() {
-
   const [inputs, setInputs] = useState( {
     username: '',
     email: ''
@@ -123,6 +126,10 @@ const onToggle = id => {
     )
   );
 };
+// useMemo
+// 첫 번째 파라미터 : 연산 방식 정의하는 함수
+// 두 번째 파라미터 : deps 배열 -> 배열 안의 내용이 바뀌면 등록한 함수를 호출해서 연산
+const count = useMemo(() => countActiveUsers(users), [users]);
 
   return(
     <>
@@ -133,6 +140,7 @@ const onToggle = id => {
       onCreate={onCreate}
       />
       <UserList users={users} onRemove={onRemove} onToggle={onToggle}/>
+      <div>active user number : {count}</div>
     </>
   )
 }
