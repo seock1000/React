@@ -1,4 +1,4 @@
-import { React, useRef, useState, useMemo, useCallback } from 'react';
+import { React, useRef, useMemo, useCallback, useReducer } from 'react';
 //import Hello from './Hello';
 //import Wrapper from './Wrapper';
 //import Counter from './Counter';
@@ -55,29 +55,12 @@ function countActiveUsers(users) {
   return users.filter(user => user.active).length;
 }
 
-function App() {
-  const [inputs, setInputs] = useState( {
+const initialState = {
+  inputs: {
     username: '',
     email: ''
-  });
-
-  const {username, email} = inputs;
-
-  // useCallback : 함수들은 컴포넌트가 리랜더링 될 때마다 새로 만들어짐, useCallback을 사용하면 함수를 재사용 가능
-  // deps 값이 바뀔 때만 함수를 새로 만듦
-  // 최적화를 위해 사용
-  const onChange = useCallback(e => {
-    const { name, value } = e.target;
-    setInputs({
-      ...inputs,
-      [name]: value
-    });
-  }, 
-  [inputs]
-  );
-
-// App.js에서 users 생성하여 전달
-const [users, setUsers] = useState([
+  },
+  users: [
   {
       id: 1,
       username: 'seockcheon',
@@ -96,48 +79,94 @@ const [users, setUsers] = useState([
       email: 'test3@gmail.com',
       active: false
   }
-]);
+]
+};
 
-// useRef 사용하여 id 관리
-const nextId = useRef(4);
+function reducer(state, action) {
+  switch(action.type) {
+    case 'CHANGE_INPUT':
+      return {
+        ...state,
+        inputs: {
+          ...state.inputs,
+          [action.name]: action.value
+          }
+      };
+    case 'CREATE_USER':
+      return {
+        inputs: initialState.inputs,
+        // 배열도 객체와 마찬가지로 리액트에서는 변경 불허용 => 기존 배열을 복사하고 거기에 추가한 걸로 새로 만들어야함
+        // 배열에 새 항목 추가시 두 가지 방법, spread(...) or concat function
+        //setUsers([...users, user]);
+        users: state.users.concat(action.user)
+      };
+    case 'TOGGLE_USER':
+      return {
+        ...state,
+        users: state.users.map(user =>
+          user.id === action.id ? {...user, active: !user.active } : user
+          )
+      };
+    case 'REMOVE_USER':
+      return {
+        // user.id가 일치하지 않는 element만 추출해서 새로운 배열 생성 => 사실 삭제가 아니라 걔 빼고 새로 만드는 너낌..?
+        ...state,
+        users: state.users.filter(user => user.id !== action.id)
+      };
+    default:
+      return state;
+  }
+}
+
+function App() {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  // useRef 사용하여 id 관리
+  const nextId = useRef(4);
+
+  const { users } = state;
+  const { username, email } = state.inputs;
+
+  // useCallback : 함수들은 컴포넌트가 리랜더링 될 때마다 새로 만들어짐, useCallback을 사용하면 함수를 재사용 가능
+  // deps 값이 바뀔 때만 함수를 새로 만듦
+  // 최적화를 위해 사용
+  const onChange = useCallback(e => {
+    const { name, value } = e.target;
+    dispatch({
+      type: 'CHANGE_INPUT',
+      name,
+      value
+    });
+  }, 
+  []
+  );
+
 // 배열에 항목 추가 로직
 const onCreate = useCallback(() => {
-  const user = {
-    id: nextId.current,
-    username,
-    email
-  };
-
-  // 배열도 객체와 마찬가지로 리액트에서는 변경 불허용 => 기존 배열을 복사하고 거기에 추가한 걸로 새로 만들어야함
-  // 배열에 새 항목 추가시 두 가지 방법, spread(...) or concat function
-  //setUsers([...users, user]);
-  setUsers(users.concat(user));
-
-  setInputs({
-    username: '',
-    email: ''
+  dispatch({
+    type: 'CREATE_USER',
+    user: {
+      id: nextId.current,
+      username,
+      email
+    }
   });
   nextId.current += 1;
-},
-[users, username, email]
-);
+}, [username, email]);
 
 const onRemove = useCallback(id => {
-  // user.id가 일치하지 않는 element만 추출해서 새로운 배열 생성 => 사실 삭제가 아니라 걔 빼고 새로 만드는 너낌..?
-  setUsers(users.filter(user => user.id !== id));
-},
-[users]
-);
+  dispatch({
+    type: 'REMOVE_USER',
+    id
+  });
+}, []);
 
 const onToggle = useCallback(id => {
-  setUsers(
-    users.map(user =>
-      user.id === id ? {...user, active: !user.active} : user
-    )
-  );
-},
-[users]
-);
+  dispatch({
+    type: 'TOGGLE_USER',
+    id
+  });
+}, []);
+
 // useMemo
 // 첫 번째 파라미터 : 연산 방식 정의하는 함수
 // 두 번째 파라미터 : deps 배열 -> 배열 안의 내용이 바뀌면 등록한 함수를 호출해서 연산
@@ -146,15 +175,19 @@ const count = useMemo(() => countActiveUsers(users), [users]);
   return(
     <>
       <CreateUser 
-      username={username}
-      email={email}
-      onChange={onChange}
-      onCreate={onCreate}
+        username={username} 
+        email={email} 
+        onChange={onChange} 
+        onCreate={onCreate}
       />
-      <UserList users={users} onRemove={onRemove} onToggle={onToggle}/>
+      <UserList 
+      users={users} 
+      onToggle={onToggle}
+      onRemove={onRemove}
+      />
       <div>active user number : {count}</div>
     </>
-  )
+  );
 }
 
 export default App;
