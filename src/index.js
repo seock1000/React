@@ -3,12 +3,13 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import CounterReducer from './CounterReducer';
 
 // element id가 root인 DOM 랜더링 -> index.html 내부에 <div id="root"></div> => 여기 안에다가 랜더링
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <CounterReducer />
   </React.StrictMode>
 );
 

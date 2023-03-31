@@ -20,4 +20,5 @@ function CreateUser({username, email, onChange, onCreate}) {
     );
 }
 
-export default CreateUser;
+// React.memo 함수 : props가 바뀌지 않았다면 리랜더링 방지
+export default React.memo(CreateUser);

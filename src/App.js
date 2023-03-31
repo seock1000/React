@@ -65,6 +65,7 @@ function App() {
 
   // useCallback : 함수들은 컴포넌트가 리랜더링 될 때마다 새로 만들어짐, useCallback을 사용하면 함수를 재사용 가능
   // deps 값이 바뀔 때만 함수를 새로 만듦
+  // 최적화를 위해 사용
   const onChange = useCallback(e => {
     const { name, value } = e.target;
     setInputs({
@@ -117,13 +118,16 @@ const onCreate = useCallback(() => {
     email: ''
   });
   nextId.current += 1;
-}
+},
+[users, username, email]
 );
 
 const onRemove = useCallback(id => {
   // user.id가 일치하지 않는 element만 추출해서 새로운 배열 생성 => 사실 삭제가 아니라 걔 빼고 새로 만드는 너낌..?
   setUsers(users.filter(user => user.id !== id));
-});
+},
+[users]
+);
 
 const onToggle = useCallback(id => {
   setUsers(
@@ -131,7 +135,9 @@ const onToggle = useCallback(id => {
       user.id === id ? {...user, active: !user.active} : user
     )
   );
-});
+},
+[users]
+);
 // useMemo
 // 첫 번째 파라미터 : 연산 방식 정의하는 함수
 // 두 번째 파라미터 : deps 배열 -> 배열 안의 내용이 바뀌면 등록한 함수를 호출해서 연산
