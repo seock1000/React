@@ -1,4 +1,4 @@
-import { React, useRef, useState, useMemo } from 'react';
+import { React, useRef, useState, useMemo, useCallback } from 'react';
 //import Hello from './Hello';
 //import Wrapper from './Wrapper';
 //import Counter from './Counter';
@@ -62,13 +62,18 @@ function App() {
   });
 
   const {username, email} = inputs;
-  const onChange = e => {
+
+  // useCallback : 함수들은 컴포넌트가 리랜더링 될 때마다 새로 만들어짐, useCallback을 사용하면 함수를 재사용 가능
+  // deps 값이 바뀔 때만 함수를 새로 만듦
+  const onChange = useCallback(e => {
     const { name, value } = e.target;
     setInputs({
       ...inputs,
       [name]: value
     });
-  };
+  }, 
+  [inputs]
+  );
 
 // App.js에서 users 생성하여 전달
 const [users, setUsers] = useState([
@@ -95,7 +100,7 @@ const [users, setUsers] = useState([
 // useRef 사용하여 id 관리
 const nextId = useRef(4);
 // 배열에 항목 추가 로직
-const onCreate = () => {
+const onCreate = useCallback(() => {
   const user = {
     id: nextId.current,
     username,
@@ -112,20 +117,21 @@ const onCreate = () => {
     email: ''
   });
   nextId.current += 1;
-};
+}
+);
 
-const onRemove = id => {
+const onRemove = useCallback(id => {
   // user.id가 일치하지 않는 element만 추출해서 새로운 배열 생성 => 사실 삭제가 아니라 걔 빼고 새로 만드는 너낌..?
   setUsers(users.filter(user => user.id !== id));
-};
+});
 
-const onToggle = id => {
+const onToggle = useCallback(id => {
   setUsers(
     users.map(user =>
       user.id === id ? {...user, active: !user.active} : user
     )
   );
-};
+});
 // useMemo
 // 첫 번째 파라미터 : 연산 방식 정의하는 함수
 // 두 번째 파라미터 : deps 배열 -> 배열 안의 내용이 바뀌면 등록한 함수를 호출해서 연산
